@@ -19,26 +19,34 @@ timeout = 20
 try:
 	element_present = EC.presence_of_element_located((By.CLASS_NAME, 'card-action-text'))
 	WebDriverWait(driver, timeout).until(element_present)
+
+	html = driver.page_source
+	soup = BeautifulSoup(html, features="lxml")
+
+	lines = str(soup).splitlines()
+
+	for line in lines:
+		if sys.argv[1].lower() in line.lower():
+			streamline = line.lower()
+			streamlist = "https://sportsurge.net/#/streamlist/" + streamline[streamline.find('#/methods/') + 10:streamline.find('#/methods/') + 14]
+
+	driver.get(streamlist)
+	timeout = 20
+	try:
+		element_present = EC.presence_of_element_located((By.CLASS_NAME, 'stream-row'))
+		WebDriverWait(driver, timeout).until(element_present)
+	except TimeoutException:
+		print("Timed out waiting for page to load")
+
 except TimeoutException:
 	print("Timed out waiting for page to load")
-
-html = driver.page_source
-soup = BeautifulSoup(html, features="lxml")
-
-lines = str(soup).splitlines()
-
-for line in lines:
-	if sys.argv[1].lower() in line.lower():
-		streamline = line.lower()
-		streamlist = "https://sportsurge.net/#/streamlist/" + streamline[streamline.find('#/methods/') + 10:streamline.find('#/methods/') + 14]
-
-driver.get(streamlist)
-timeout = 20
-try:
-	element_present = EC.presence_of_element_located((By.CLASS_NAME, 'stream-row'))
-	WebDriverWait(driver, timeout).until(element_present)
-except TimeoutException:
-	print("Timed out waiting for page to load")
+	driver.get(url)
+	timeout = 20
+	try:
+		element_present = EC.presence_of_element_located((By.CLASS_NAME, 'stream-row'))
+		WebDriverWait(driver, timeout).until(element_present)
+	except TimeoutException:
+		print("Timed out waiting for page to load")
 
 html = driver.page_source
 soup = BeautifulSoup(html, features="lxml")
