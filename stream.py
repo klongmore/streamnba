@@ -1,9 +1,13 @@
 from pyvirtualdisplay import Display
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import os, sys, time
 
-display = Display(visible=0, size=(800, 600))
+display = Display(visible=0, size=(1800, 1000))
 display.start()
 
 url = "https://sportsurge.net/#/events/19"
@@ -11,6 +15,12 @@ url = "https://sportsurge.net/#/events/19"
 driver = webdriver.Firefox() 
 
 driver.get(url)
+timeout = 20
+try:
+	element_present = EC.presence_of_element_located((By.CLASS_NAME, 'card-action-text'))
+	WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+	print("Timed out waiting for page to load")
 
 html = driver.page_source
 soup = BeautifulSoup(html, features="lxml")
@@ -19,9 +29,16 @@ lines = str(soup).splitlines()
 
 for line in lines:
 	if sys.argv[1].lower() in line.lower():
-		streamlist = "https://sportsurge.net/#/streamlist/" + line[line.find('#/methods/') + 10:line.find('text" href="') + 14]
+		streamline = line.lower()
+		streamlist = "https://sportsurge.net/#/streamlist/" + streamline[streamline.find('#/methods/') + 10:streamline.find('#/methods/') + 14]
 
 driver.get(streamlist)
+timeout = 20
+try:
+	element_present = EC.presence_of_element_located((By.CLASS_NAME, 'stream-row'))
+	WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+	print("Timed out waiting for page to load")
 
 html = driver.page_source
 soup = BeautifulSoup(html, features="lxml")
@@ -42,7 +59,20 @@ for streaminfo in streaminfos:
 display.stop()
 
 print("\nOpening top available stream...")
-os.system('xdg-open ' + streamurls[0])
+
+streamopen = False
+for s in streamurls:
+	if "buffstreamz.com" in s:
+		os.system('xdg-open ' + s)
+		streamopen = True
+	elif "ripple.is" in s:
+		os.system('xdg-open ' + s)
+		streamopen = True
+	elif "nbastreams.xyz" in s:
+		os.system('xdg-open ' + s)
+		streamopen = True
+if not streamopen:
+	os.system('xdg-open ' + streamurls[0])
 
 if input('Does this stream work? (y/n): ').lower() == 'n':
 	with open('streams.txt', 'w+') as f:
