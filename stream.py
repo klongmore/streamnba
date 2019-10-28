@@ -1,3 +1,9 @@
+# Requires:
+#
+# pip: pyvirtualdisplay, selenium, beautifulsoup4
+# packages: geckodriver, firefox
+# other: bash-style terminal, xserver (or other using xdg-open)
+
 from pyvirtualdisplay import Display
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
@@ -39,7 +45,7 @@ try:
 		print("Timed out waiting for page to load")
 
 except TimeoutException:
-	print("Timed out waiting for page to load")
+	print("Timed out waiting for page to load. Trying to continue.")
 	driver.get(url)
 	timeout = 20
 	try:
@@ -89,4 +95,4 @@ if input('Does this stream work? (y/n): ').lower() == 'n':
 	print("\nOpening list of other available streams...\n")
 	os.system('nohup subl streams.txt &> /dev/null')
 else:
-	print("\n")
+	print()
