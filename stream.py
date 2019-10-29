@@ -2,7 +2,6 @@
 #
 # pip: pyvirtualdisplay, selenium, beautifulsoup4
 # packages: geckodriver, firefox
-# other: bash-style terminal, xserver (or other using xdg-open)
 
 from pyvirtualdisplay import Display
 from selenium import webdriver
@@ -11,7 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
-import os, sys, time
+import os, sys, time, webbrowser
 
 display = Display(visible=0, size=(1800, 1000))
 display.start()
@@ -92,7 +91,10 @@ if input('Does this stream work? (y/n): ').lower() == 'n':
 	with open('streams.txt', 'w+') as f:
 		for stream in streamurls:
 			f.write(stream + "\n")
-	print("\nOpening list of other available streams...\n")
-	os.system('nohup subl streams.txt &> /dev/null')
+	print("\nA list of available streams has been saved to 'streams.txt' in your current directory.\n")
+	try:
+		os.system('nohup subl streams.txt &> /dev/null')
+	except:
+		pass
 else:
 	print()
