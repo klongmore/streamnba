@@ -44,7 +44,7 @@ try:
 		print("Timed out waiting for page to load")
 
 except TimeoutException:
-	print("Timed out waiting for page to load. Trying to continue.")
+	print("Timed out waiting for page to load. This may occur when only one game is currently being played. Trying to continue...")
 	driver.get(url)
 	timeout = 20
 	try:
@@ -76,16 +76,16 @@ print("\nOpening top available stream...")
 streamopen = False
 for s in streamurls:
 	if "buffstreamz.com" in s:
-		os.system('xdg-open ' + s)
+		os.system('xdg-open ' + s + ' &> /dev/null')
 		streamopen = True
 	elif "ripple.is" in s:
-		os.system('xdg-open ' + s)
+		os.system('xdg-open ' + s + ' &> /dev/null')
 		streamopen = True
 	elif "nbastreams.xyz" in s:
-		os.system('xdg-open ' + s)
+		os.system('xdg-open ' + s + ' &> /dev/null')
 		streamopen = True
 if not streamopen:
-	os.system('xdg-open ' + streamurls[0])
+	os.system('xdg-open ' + streamurls[0] + ' &> /dev/null')
 
 if input('Does this stream work? (y/n): ').lower() == 'n':
 	with open('streams.txt', 'w+') as f:
